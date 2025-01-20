@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+	Search-Result
+{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/news_list.css' %}">
+    {% for article in news %}
+    <article class="pulse-news-article">
+        <div class="pulse-news-article__image-container">
+            <a href="{{ article.get_absolute_url }}"><img class="pulse-news-article__image" style="border-radius: 5px" src="{{ article.image.url }}" alt="{{ article.title }}"></a>
+        </div>
+        <div class="pulse-news-article__content">
+            <time class="news-time">
+                    <i class="fa fa-calendar"></i>{{ article.publish_time|date:"jS F Y g:i A" }}
+            </time>
+            <a href="{{ article.get_absolute_url }}"><h2 class="pulse-news-article__title">{{ article.title }}</h2></a>
+            {% with article.body|truncatewords:25 as truncated_body %}
+                {% with truncated_body|wordwrap:60 as wrapped_body %}
+                    {% for line in wrapped_body.splitlines %}
+                        <p>{{ line }}</p>   
+                    {% endfor %}
+                {% endwith %}
+            {% endwith %}
+        </div>
+    </article>
+{% endfor %}
+{% endblock %}

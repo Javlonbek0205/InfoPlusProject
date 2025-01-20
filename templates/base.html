@@ -1,8 +1,10 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
-{% block title %}{% endblock title %}
+<title>{% block title %}{% endblock title %}</title>
+<link rel="icon" href="https://img.icons8.com/fluency/48/news.png" type="image/png"> 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,13 +33,33 @@
         <div class="header_top">
           <div class="header_top_left">
             <ul class="top_nav">
-              <li><a href="{% url 'home' %}">Home</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="{% url 'contact_form' %}">Contact</a></li>
+              <li><a href="{% url 'home' %}">{% blocktrans %}
+              	Asosiy
+              {% endblocktrans %}</a></li>
+              <li><a href="#">{% blocktrans %}
+              	Biz Haqimizda
+              {% endblocktrans %}</a></li>
+              <li><a href="{% url 'contact_form' %}">{% blocktrans %}
+              	Aloqa
+              {% endblocktrans %}</a></li>
             </ul>
+              <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <select name="language">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Go">
+        </form>
           </div>
           <div class="header_top_right">
-            <p>Friday, December 05, 2045</p>
+            <p>{% now 'jS F Y H:i ' %}</p>
           </div>
         </div>
       </div>
@@ -55,22 +77,44 @@
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav main_nav">
-          <li class="active"><a href="{% url 'home' %}"><span class="fa fa-home desktop-home"></span><span class="mobile-show">Home</span></a></li>
-          <li><a href="#">Technology</a></li>
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mobile</a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Android</a></li>
-              <li><a href="#">Samsung</a></li>
-              <li><a href="#">Nokia</a></li>
-              <li><a href="#">Walton Mobile</a></li>
-              <li><a href="#">Sympony</a></li>
-            </ul>
-          </li>
-          <li><a href="#">Laptops</a></li>
-          <li><a href="#">Tablets</a></li>
-          <li><a href="{% url 'contact_form' %}">Contact Us</a></li>
-          <li><a href="{% url 'get_404' %}">404 Page</a></li>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
+          <li class="active"><a href="{% url 'home' %}"><span class="fa fa-home desktop-home"></span><span class="mobile-show">{% blocktrans %}
+              	Asosiy
+              {% endblocktrans %}</span></a></li>
+            {% for category in categories %}
+            <li><a href="{% url 'news_category' category.name %}">{{ category }}</a></li>
+            {% endfor %}
+            <li><a href="{% url 'contact_form' %}">{% blocktrans %}
+              	Biz bilan bog'lanish
+              {% endblocktrans %}</a></li>
+            {% if user.is_authenticated and user.is_superuser %}
+            	<li><a href="{% url 'admin_page' %}" style="color: yellow">Admin</a></li>
+            	<li><a href="{% url 'news_create' %}" style="color: yellow">{% blocktrans %}
+              	Yaratish
+              {% endblocktrans %}</a></li>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}#profile" style="color: yellow">{% blocktrans %}
+              	Mening profilim
+              {% endblocktrans %}</a></li>
+              {% else %}
+                  <li><a href="{% url 'login' %}#login" style="color: yellow">{% blocktrans %}
+              	Tizimga kirish
+              {% endblocktrans %}</a></li>
+                  <li><a href="{% url 'signup' %}#signup" style="color: yellow">{% blocktrans %}
+              	Ro'yxatdan o'tish
+              {% endblocktrans %}</a></li>
+                  <li><a href="{% url 'password_reset' %}" style="color: #31b0d5">{% blocktrans %}
+              	Parolni tiklash
+              {% endblocktrans %}</a></li>
+              {% endif %}
+                <li>
+                    <div class="container-fluid">
+                        <form class="d-flex" role="search" action="{% url 'news_search' %}" method="get">
+                          <input name="q" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        </form>
+                    </div>
+                </li>
         </ul>
       </div>
     </nav>
@@ -78,13 +122,15 @@
   <section id="newsSection">
     <div class="row">
       <div class="col-lg-12 col-md-12">
-        <div class="latest_newsarea"> <span>Latest News</span>
+        <div class="latest_newsarea"> <span>{% blocktrans %}
+              	So'ngi yangiliklar
+              {% endblocktrans %}</span>
           <ul id="ticker01" class="news_sticker">
               {% for new in latest_news  %}
-            <li><a href="{% url 'single_page' new.pk %}"><img src="{{ new.image.url }}" alt="">{{ new.title }}</a></li>
+            <li><a href="{{ new.get_absolute_url }}"><img src="{{ new.image.url }}" alt="">{{ new.title }}</a></li>
               {% endfor %}
           </ul>
-          <div class="social_area">
+          <div class="social_area"> 
             <ul class="social_nav">
               <li class="facebook"><a href="#"></a></li>
               <li class="twitter"><a href="#"></a></li>
@@ -102,7 +148,7 @@
   </section>
     
     {% block content %}
-    
+
     {% endblock content %}
     
   <footer id="footer">
@@ -117,14 +163,9 @@
           <div class="footer_widget wow fadeInDown">
             <h2>Tag</h2>
             <ul class="tag_nav">
-              <li><a href="#">Games</a></li>
-              <li><a href="#">Sports</a></li>
-              <li><a href="#">Fashion</a></li>
-              <li><a href="#">Business</a></li>
-              <li><a href="#">Life &amp; Style</a></li>
-              <li><a href="#">Technology</a></li>
-              <li><a href="#">Photo</a></li>
-              <li><a href="#">Slider</a></li>
+                {% for category in categories %}
+                	<li><a href="{% url 'news_category' category.name %}">{{ category }}</a></li>
+                {% endfor %}
             </ul>
           </div>
         </div>
@@ -140,7 +181,7 @@
       </div>
     </div>
     <div class="footer_bottom">
-      <p class="copyright">Copyright &copy; 2045 <a href="{% url 'home' %}">NewsFeed</a></p>
+      <p class="copyright">Copyright &copy; {%  now 'Y' %} <a href="{% url 'home' %}">INFOPULSE</a></p>
       <p class="developer">Developed By Wpfreeware</p>
     </div>
   </footer>
