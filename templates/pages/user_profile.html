@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}
+    Profile
+{% endblock %}
+{% block content %}
+<div class="profile-container" id="profile">
+    <div class="profile-card">
+        <div class="profile-header">
+            {% if user.profile.image %}
+                <div class="profile-image">
+                    <img src="{{ user.profile.image.url }}" alt="{{ user.username }}">
+                </div>
+            {% else %}
+                <div class="profile-image">
+                    <img src="{% static 'default-avatar.png' %}" alt="Default Avatar">
+                </div>
+            {% endif %}
+            <h2 class="profile-name">{{ user.username }}</h2>
+            <p class="profile-role">Username</p>
+            <div class="edit-icon"><a href="{% url 'profile_edit' %}#edit_profile">✎</a></div>
+        </div>
+        
+        <div class="profile-info">
+            <h3>{% blocktrans %}
+              	Ma'lumotlar
+              {% endblocktrans %}</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user.email|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">{% blocktrans %}
+              	Ism
+              {% endblocktrans %}</span>
+                    <span class="info-value">{{ user.first_name|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">{% blocktrans %}
+              	Familya
+              {% endblocktrans %}</span>
+                    <span class="info-value">{{ user.last_name|default:"Not provided" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">{% blocktrans %}
+              	Tug'ilgan sana
+              {% endblocktrans %}</span>
+                    <span class="info-value">{{ user.profile.date_of_birth|default:"Not provided" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'profile_edit' %}#edit_profile" class="action-button edit">{% blocktrans %}
+              	Profilni tahrirlash
+              {% endblocktrans %}</a>
+            <a href="{% url 'password_change' %}" class="action-button password">{% blocktrans %}
+              	Parolni almashtirish
+              {% endblocktrans %}</a>
+            <a href="#" onclick="document.getElementById('logout-form').submit();" class="action-button logout">{% blocktrans %}
+              	Tizimdan chiqish
+              {% endblocktrans %}</a>
+        </div>
+    </div>
+</div>
+
+<form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<style>
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #8a8a8a;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #44b2ed, #5a5af4);
+    padding: 30px 20px;
+    text-align: center;
+    position: relative;
+    color: white;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid white;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.profile-role {
+    margin: 5px 0 0;
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.edit-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.profile-info {
+    padding: 20px;
+}
+
+.profile-info h3 {
+    margin: 0 0 20px;
+    color: #333;
+    font-size: 18px;
+}
+
+.info-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 16px;
+    color: #333;
+}
+
+.profile-actions {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.action-button {
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: opacity 0.2s;
+}
+
+.action-button:hover {
+    opacity: 0.9;
+}
+
+.action-button.edit {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.action-button.password {
+    background-color: #00acee;
+    color: white;
+}
+
+.action-button.logout {
+    background-color: #dc3545;
+    color: white;
+}
+
+@media (max-width: 480px) {
+    .profile-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-card {
+        margin: 10px;
+    }
+}
+</style>
+{% endblock %}

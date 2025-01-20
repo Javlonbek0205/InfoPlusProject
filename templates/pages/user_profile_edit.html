@@ -1,10 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}
+    Profile-Edit
+{% endblock %}
+{% block content %}
+<div class="profile-container" id="edit_profile">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>{% blocktrans %}
+              	Profilni tahrirlash
+              {% endblocktrans %}</h2>
+            <p>{% blocktrans %}
+              	Profil ma'lumotlarini yangilang
+              {% endblocktrans %}</p>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="edit-form">
+            {% csrf_token %}
+            
+            <div class="form-content">
+                <div class="form-section">
+                    <h3>{% blocktrans %}
+              	Shaxsiy ma'lumotlar
+              {% endblocktrans %}</h3>
+                    {% for field in user_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="field-errors">
+                                    {% for error in field.errors %}
+                                        <span class="error-message">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
 
-</body>
-</html>
+                <div class="form-section">
+                    <h3>{% blocktrans %}
+              	Profil tafsilotlari
+              {% endblocktrans %}</h3>
+                    {% for field in profile_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="field-errors">
+                                    {% for error in field.errors %}
+                                        <span class="error-message">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="update-button">Update Profile</button>
+                <a href="{% url 'profile' %}#profile" class="cancel-button">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #8a8c8b;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #3dc2f3, #2b6af1);
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.profile-header p {
+    margin: 5px 0 0;
+    opacity: 0.9;
+}
+
+.edit-form {
+    padding: 20px;
+}
+
+.form-content {
+    display: grid;
+    gap: 30px;
+}
+
+.form-section {
+    display: grid;
+    gap: 20px;
+}
+
+.form-section h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-group {
+    display: grid;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #666;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input[type="file"] {
+    padding: 8px;
+}
+
+.field-errors {
+    margin-top: 4px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+}
+
+.form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.update-button {
+    padding: 12px 24px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.update-button:hover {
+    opacity: 0.9;
+}
+
+.cancel-button {
+    padding: 12px 24px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    transition: opacity 0.2s;
+}
+
+.cancel-button:hover {
+    opacity: 0.9;
+    color: white;
+    text-decoration: none;
+}
+
+/* Style Django form widgets */
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+.form-group input[type="date"] {
+    min-height: 38px;
+}
+
+@media (max-width: 480px) {
+    .form-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-card {
+        margin: 10px;
+    }
+}
+</style>
+{% endblock %}
