@@ -1,10 +1,197 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Login
+{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div class="auth-container" id="login">
+    <div class="auth-card">
+        <h2>Login</h2>
+        <form class="auth-form" method="post">{% csrf_token %}
+            <div class="form-group">
+                <input type="text" id="login-email" placeholder="Email or Username" name="username" required>
+            </div>
+            <div class="form-group">
+                <div class="password-input">
+                    <input type="password" id="login-password" placeholder="Password" name="password" required>
+                    <button type="button" class="toggle-password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                {% if form.errors %}
+                <div class="errorlist" style="margin-bottom: 10px; color: red">
+                    Username or Password didn't match
+                </div>
+                {% endif %}
+                <a href="{% url 'password_reset' %}" class="forgot-password">Forgot password?</a>
+            </div>
+            <button type="submit" class="auth-button">Login</button>
+            <div class="divider">
+                <span>Or</span>
+            </div>
+            <button type="button" class="social-button facebook">
+                <i class="fab fa-facebook"></i>
+                Login with Facebook
+            </button>
+            <button type="button" class="social-button google">
+                <i class="fab fa-google"></i>
+                Login with Google
+            </button>
+        </form>
+    </div>
+</div>
 
-</body>
-</html>
+<style>
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth-card h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #333;
+}
+
+.auth-form .form-group {
+    margin-bottom: 16px;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.password-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    color: #0066cc;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 8px;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 12px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+
+.divider {
+    text-align: center;
+    margin: 16px 0;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #ddd;
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider span {
+    background: white;
+    padding: 0 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.social-button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.social-button i {
+    margin-right: 8px;
+}
+
+.social-button.facebook {
+    color: #1877f2;
+}
+
+.social-button.google {
+    color: #ea4335;
+}
+        .error-message {
+            color: #e53e3e;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .dark-mode .error-message {
+            color: #fc8181;
+        }
+
+        .success-message {
+            color: #38a169;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .dark-mode .success-message {
+            color: #68d391;
+        }
+        .errorlist {
+            color: red;
+            font-size: 16px;
+        }
+</style>
+{% endblock %}
