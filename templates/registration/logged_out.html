@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+	Log Out
+{% endblock %}
+{% block content %}
+<h2>Log Out</h2>
+    <form method="post">
+    <p>Saytdan chiqishni tasdiqlang!</p>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-danger ml-2">Log Out</button>
+    </form>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import News, Category, Contact
+from .models import News, Category, Contact, Comment
 
 
 # Register your models here.
@@ -15,9 +15,12 @@ class NewsAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    fields = ('name',)
-    list_display = ('name',)
+    pass
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    pass
