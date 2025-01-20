@@ -1,10 +1,163 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="news-form-wrapper">
+    <div class="news-form-container">
+        <h2>Yangilik qo'shish</h2>
+        <form class="news-form-grid" method="post" id="newsForm" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="news-form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+          <p style="color: red;">{{ field.errors }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <div class="news-form-actions">
+                <button type="submit" class="news-form-submit">Qo'shish</button>
+            </div>
+  </form>
+    </div>
+</div>
 
-</body>
-</html>
+<style>
+    .news-form-wrapper {
+        padding: 2rem;
+        background: linear-gradient(to bottom, #f3e8ff, #ffffff);
+    }
+
+    .news-form-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .news-form-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color: #333;
+    }
+
+    .news-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .news-form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .news-form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #374151;
+    }
+
+    .news-form-group input[type="text"],
+    .news-form-group textarea,
+    .news-form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 1.2rem;
+        transition: border-color 0.15s ease;
+    }
+
+    .news-form-group input[type="text"]:focus,
+    .news-form-group textarea:focus,
+    .news-form-group select:focus {
+        outline: none;
+        border-color: #a855f7;
+        box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+    }
+
+    .news-form-group input[type="file"] {
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .news-form-group input[type="file"]::file-selector-button {
+        background: #f3e8ff;
+        border: 0;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        color: #7e22ce;
+        font-weight: 600;
+        margin-right: 1rem;
+        cursor: pointer;
+    }
+
+    .news-form-group input[type="file"]::file-selector-button:hover {
+        background: #e9d5ff;
+    }
+
+    .news-form-group textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .news-form-actions {
+        margin-top: 2rem;
+        text-align: right;
+    }
+
+    .news-form-submit {
+        background: #7e22ce;
+        color: white;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+    }
+
+    .news-form-submit:hover {
+        background: #6b21a8;
+    }
+
+    @media (max-width: 768px) {
+        .news-form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .news-form-wrapper {
+            padding: 1rem;
+        }
+        
+        .news-form-container {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<script>
+    document.getElementById('newsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value) {
+                isValid = false;
+                field.style.borderColor = '#ef4444';
+            } else {
+                field.style.borderColor = '#e5e7eb';
+            }
+        });
+
+        if (isValid) {
+            this.submit();
+        }
+    });
+</script>
+{% endblock %}
