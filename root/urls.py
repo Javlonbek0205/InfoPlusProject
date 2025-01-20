@@ -14,16 +14,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-
+from news_app.views import home_view
 from root import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('news_app.urls')),
-]
+]+i18n_patterns(
+    path("i18n/", include("django.conf.urls.i18n")),
+    path('accounts/', include('accounts.urls')),
+    path('', home_view, name='home'),
+    path('news/', include('news_app.urls')),
+)
 if settings.DEBUG:
     urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns+=static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
